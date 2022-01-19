@@ -1,6 +1,6 @@
 import useInput from "../hooks/use-input";
 
-const SimpleInput = () => {
+const SimpleInput = (props) => {
 
   const {
         value, 
@@ -9,20 +9,12 @@ const SimpleInput = () => {
         isValid,
         inputChangeHandler, 
         inputBlurHandler
-  } = useInput(value => value.trim() !== '')
+  } = useInput(props.validationRule)
 
-  const {
-        value: emailValue, 
-        hasError: emailHasError, 
-        reset: emailReset,
-        isValid: emailIsValid,
-        inputChangeHandler: emailChangeHandler, 
-        inputBlurHandler: emailBlurHandler
-  } = useInput(emailValue => emailValue.includes('@') && emailValue !== undefined)
    
   let formIsValid = false
 
-  if (isValid && emailIsValid) {
+  if (isValid ) {
     formIsValid = true
   }
 
@@ -32,47 +24,29 @@ const SimpleInput = () => {
     
     if (!formIsValid) return
     
-    console.log(value, emailValue)
+    console.log(value)
 
     reset()
-    emailReset()
-    
   }
   
-  const nameInputClasses = hasError || emailHasError
+  const nameInputClasses = hasError 
   ? 'form-control invalid' 
   : 'form-control'
 
   return (
     <form onSubmit={formSubmissionHandler}>
       <div className={nameInputClasses}>
-        <label htmlFor='name'>Your Name</label>
+        <label htmlFor='name'>{props.label}</label>
         <input 
-          type='text' 
-          id='name' 
+          type={props.type}
+          id={props.id}
           onChange={inputChangeHandler}
           onBlur={inputBlurHandler}
           value={value}
         />
         { hasError && (
-          <p className="error-text">Name must not be empty.</p>
+          <p className="error-text">Input must not be empty.</p>
         )}
-      </div>
-      <div className={nameInputClasses}>
-        <label htmlFor='email'>Your E-mail</label>
-        <input 
-          type='email' 
-          id='email' 
-          onChange={emailChangeHandler}
-          onBlur={emailBlurHandler}
-          value={emailValue}
-        />
-        { emailHasError && (
-          <p className="error-text">E-mail must be valid.</p>
-        )}
-      </div>
-      <div className="form-actions">
-        <button disabled={hasError || emailHasError}>Submit</button>
       </div>
     </form>
   );
